@@ -49,28 +49,34 @@ public class Check_list_adapter extends RecyclerView.Adapter<checkListViewHolder
         if(MyConstants.FALSE_STRING.equals(show)){
             holder.deleteBtn.setVisibility(View.GONE);
             holder.layout.setBackgroundDrawable(context.getResources().getDrawable(R.drawable.border_one));
-        }else{
+        } else {
             if(list.get(position).getChecked()){
                 holder.layout.setBackgroundColor(Color.parseColor("#8e546f"));
-            }else
+            } else {
                 holder.layout.setBackgroundDrawable(context.getResources().getDrawable(R.drawable.border_one));
+            }
         }
 
         holder.checkBox.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                int adapterPosition = holder.getAdapterPosition();
+                if (adapterPosition == RecyclerView.NO_POSITION) return;
+
                 Boolean check = holder.checkBox.isChecked();
-                database.mainDAO().checkUncheck(list.get(position).getID(), check);
+                database.mainDAO().checkUncheck(list.get(adapterPosition).getID(), check);
+
                 if (MyConstants.FALSE_STRING.equals(show)) {
                     list = database.mainDAO().getAllSelected(true);
                     notifyDataSetChanged();
                 } else {
-                    list.get(position).setChecked(check);
-                    notifyDataSetChanged();
+                    list.get(adapterPosition).setChecked(check);
+                    notifyItemChanged(adapterPosition);
+
                     if (message != null) {
                         message.cancel(); // Cancel the previous toast if it exists
                     }
-                    if (list.get(position).getChecked()) {
+                    if (list.get(adapterPosition).getChecked()) {
                         message = Toast.makeText(context, "(" + holder.checkBox.getText() + ") Is-Packed", Toast.LENGTH_SHORT);
                     } else {
                         message = Toast.makeText(context, "(" + holder.checkBox.getText() + ") Un-Packed", Toast.LENGTH_SHORT);
@@ -83,14 +89,17 @@ public class Check_list_adapter extends RecyclerView.Adapter<checkListViewHolder
         holder.deleteBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                new AlertDialog.Builder(context).setTitle("Delete ("+list.get(position).getItemName()+")")
+                int adapterPosition = holder.getAdapterPosition();
+                if (adapterPosition == RecyclerView.NO_POSITION) return;
+
+                new AlertDialog.Builder(context).setTitle("Delete ("+list.get(adapterPosition).getItemName()+")")
                         .setMessage("Are you sure?")
                         .setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
-                                database.mainDAO().delete(list.get(position));
-                                list.remove(list.get(position));
-                                notifyDataSetChanged();
+                                database.mainDAO().delete(list.get(adapterPosition));
+                                list.remove(adapterPosition);
+                                notifyItemRemoved(adapterPosition);
                             }
                         }).setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
                             @Override

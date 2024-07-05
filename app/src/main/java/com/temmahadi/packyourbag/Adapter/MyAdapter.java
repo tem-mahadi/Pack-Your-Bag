@@ -48,18 +48,20 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.myViewHolder> {
         holder.linearLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                int adapterPosition = holder.getAdapterPosition();
+                if (adapterPosition == RecyclerView.NO_POSITION) return;
+
                 Intent intent = new Intent(view.getContext(), CheckList.class);
-                intent.putExtra(MyConstants.HEADER_SMALL,titles.get(position));
-                if(MyConstants.MY_SELECTIONS.equals(titles.get(position))){
-                    intent.putExtra(MyConstants.SHOW_SMALL,MyConstants.FALSE_STRING);
-                }else{
-                    intent.putExtra(MyConstants.SHOW_SMALL,MyConstants.TRUE_STRING);
+                intent.putExtra(MyConstants.HEADER_SMALL, titles.get(adapterPosition));
+                if (MyConstants.MY_SELECTIONS.equals(titles.get(adapterPosition))) {
+                    intent.putExtra(MyConstants.SHOW_SMALL, MyConstants.FALSE_STRING);
+                } else {
+                    intent.putExtra(MyConstants.SHOW_SMALL, MyConstants.TRUE_STRING);
                 }
                 view.getContext().startActivity(intent);
             }
         });
     }
-
     @Override
     public int getItemCount() {
         return titles.size();

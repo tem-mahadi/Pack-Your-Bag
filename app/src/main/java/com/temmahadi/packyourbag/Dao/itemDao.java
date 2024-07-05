@@ -29,7 +29,7 @@ public interface itemDao {
     @Query("delete from items where category=:category")
     Integer deleteAllByCategory(String category);
     @Query("delete from items where category=:category and addedby=:addedBy")
-    Integer deleteAllByCategoryAndAddedBY(String category, String addedBy);
+    Integer deleteAllByCategoryAndAddedBy(String category, String addedBy);
     @Query("select * from items where checked=:checked order by ID asc")
     List<items> getAllSelected(Boolean checked);
 }
